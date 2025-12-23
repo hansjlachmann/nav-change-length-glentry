@@ -2,8 +2,9 @@ OBJECT Table 68202 Compello Document Line
 {
   OBJECT-PROPERTIES
   {
-    Date=24.04.19;
-    Time=12:00:00;
+    Date=23.12.25;
+    Time=14:02:56;
+    Modified=Yes;
     Version List=COMPNAV5-1.0;
   }
   PROPERTIES
@@ -75,7 +76,7 @@ OBJECT Table 68202 Compello Document Line
     { 61  ;   ;ReceivedUnits       ;Decimal        }
     { 62  ;   ;Recno               ;Integer        }
     { 63  ;   ;RequisitionedBy     ;Text30         }
-    { 64  ;   ;Text                ;Text50         }
+    { 64  ;   ;Text                ;Text100        }
     { 65  ;   ;UnitPrice           ;Decimal        }
     { 66  ;   ;UserDef1            ;Text30         }
     { 67  ;   ;UserDef10           ;Text30         }

@@ -2,8 +2,8 @@ OBJECT Table 17 Finanspost
 {
   OBJECT-PROPERTIES
   {
-    Date=04.04.19;
-    Time=11:17:31;
+    Date=23.12.25;
+    Time=14:03:31;
     Modified=Yes;
     Version List=DE2.50,INC3.0.0.0,INC3.0.1.0,SID.04,COMPNAV5-1.0;
   }
@@ -38,7 +38,7 @@ OBJECT Table 17 Finanspost
     { 6   ;   ;Document No.        ;Code20        ;CaptionML=[DEU=Belegnr.;
                                                               ENU=Document No.;
                                                               NOR=Bilagsnr.] }
-    { 7   ;   ;Description         ;Text50        ;CaptionML=[DEU=Beschreibung;
+    { 7   ;   ;Description         ;Text100       ;CaptionML=[DEU=Beschreibung;
                                                               ENU=Description;
                                                               NOR=Beskrivelse] }
     { 10  ;   ;Bal. Account No.    ;Code20        ;TableRelation=IF (Bal. Account Type=CONST(G/L Account)) "G/L Account"

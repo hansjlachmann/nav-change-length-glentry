@@ -2,8 +2,9 @@ OBJECT Codeunit 68201 Compello Create Document
 {
   OBJECT-PROPERTIES
   {
-    Date=24.04.19;
-    Time=12:00:00;
+    Date=23.12.25;
+    Time=14:00:12;
+    Modified=Yes;
     Version List=COMPNAV5-1.0;
   }
   PROPERTIES
@@ -86,7 +87,7 @@ OBJECT Codeunit 68201 Compello Create Document
       GenJnlLine.VALIDATE(KID, CompelloDocument.KID);
       GenJnlLine.VALIDATE("External Document No.", CompelloDocument.InvoiceNo);
       GenJnlLine."Compello Archive No." := CompelloDocument.ArchiveRef;
-      GenJnlLine.VALIDATE(Description, COPYSTR(CompelloLine.Text,1,50));
+      GenJnlLine.VALIDATE(Description, COPYSTR(CompelloLine.Text,1,100));
 
       IF GenJnlLine."VAT Prod. Posting Group" = '' THEN BEGIN
         GenJnlLine.VALIDATE("Gen. Posting Type", 0);
@@ -223,7 +224,7 @@ OBJECT Codeunit 68201 Compello Create Document
                   GenJnlLine2.VALIDATE("Bal. VAT Bus. Posting Group", '');
                 END;
                 GenJnlLine2.VALIDATE("Due Date", CompelloDocument.DueDate);
-                GenJnlLine2.VALIDATE(Description, COPYSTR(CompelloLine.Text,1,50));
+                GenJnlLine2.VALIDATE(Description, COPYSTR(CompelloLine.Text,1,100));
                 GenJnlLine2.INSERT(TRUE);
 
                 GenJnlLine2."Compello Archive No." := GenJnlLine."Compello Archive No.";    // COMP3.00

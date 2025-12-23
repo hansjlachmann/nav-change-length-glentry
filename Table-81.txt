@@ -2,8 +2,8 @@ OBJECT Table 81 Finanskladdlinje
 {
   OBJECT-PROPERTIES
   {
-    Date=04.04.19;
-    Time=11:14:39;
+    Date=23.12.25;
+    Time=14:03:49;
     Modified=Yes;
     Version List=NO2.60.02,REM4.00.02,LPG01,COMPNAV5-1.0;
   }
@@ -271,7 +271,7 @@ OBJECT Table 81 Finanskladdlinje
     { 7   ;   ;Document No.        ;Code20        ;CaptionML=[DEU=Belegnr.;
                                                               ENU=Document No.;
                                                               NOR=Bilagsnr.] }
-    { 8   ;   ;Description         ;Text50        ;CaptionML=[DEU=Beschreibung;
+    { 8   ;   ;Description         ;Text100       ;CaptionML=[DEU=Beschreibung;
                                                               ENU=Description;
                                                               NOR=Beskrivelse] }
     { 10  ;   ;VAT %               ;Decimal       ;OnValidate=BEGIN
