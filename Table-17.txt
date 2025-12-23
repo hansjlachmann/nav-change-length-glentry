@@ -3,8 +3,7 @@ OBJECT Table 17 Finanspost
   OBJECT-PROPERTIES
   {
     Date=23.12.25;
-    Time=14:03:31;
-    Modified=Yes;
+    Time=00:00:00;
     Version List=DE2.50,INC3.0.0.0,INC3.0.1.0,SID.04,COMPNAV5-1.0;
   }
   PROPERTIES

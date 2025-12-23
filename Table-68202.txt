@@ -3,8 +3,7 @@ OBJECT Table 68202 Compello Document Line
   OBJECT-PROPERTIES
   {
     Date=23.12.25;
-    Time=14:02:56;
-    Modified=Yes;
+    Time=00:00:00;
     Version List=COMPNAV5-1.0;
   }
   PROPERTIES
