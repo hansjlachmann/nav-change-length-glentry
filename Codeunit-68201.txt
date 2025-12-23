@@ -1,0 +1,320 @@
+OBJECT Codeunit 68201 Compello Create Document
+{
+  OBJECT-PROPERTIES
+  {
+    Date=24.04.19;
+    Time=12:00:00;
+    Version List=COMPNAV5-1.0;
+  }
+  PROPERTIES
+  {
+    OnRun=BEGIN
+          END;
+
+  }
+  CODE
+  {
+    VAR
+      GenJnlLine@1101103000 : Record 81;
+      IntegrationSetup@1101103001 : Record 68200;
+      firstDoc@1101103002 : Boolean;
+      lastArchiveNo@1101103003 : Text[15];
+      currArchiveNo@1101103004 : Text[15];
+      LastGenJnlLine@1101103005 : Record 81;
+
+    PROCEDURE SetGenJnlLine@1000000002(p_GenJnlLine@1000000000 : Record 81);
+    BEGIN
+      GenJnlLine := p_GenJnlLine;
+    END;
+
+    PROCEDURE EnumerateAndCreateCompelloDocs@1000000008();
+    VAR
+      CompelloDocument@1000000000 : Record 68201;
+      CompelloDownloader@1101103000 : Codeunit 68203;
+    BEGIN
+      GetSetup;
+      CompelloDocument.SETRANGE(Status,CompelloDocument.Status::Imported);
+      IF CompelloDocument.FINDSET(FALSE,FALSE) THEN BEGIN
+        firstDoc := TRUE;
+        REPEAT
+          CreateSingleDocument(CompelloDocument);
+          firstDoc := FALSE;
+          lastArchiveNo := CompelloDocument.ArchiveRef;
+        UNTIL CompelloDocument.NEXT=0;
+      END;
+    END;
+
+    PROCEDURE CreateSingleDocument@1000000010(CompelloDocument@1000000000 : Record 68201);
+    VAR
+      GenJnlBatch@1101103002 : Record 232;
+      CompelloLine@1000000001 : Record 68202;
+      CompelloDocType@1000000002 : Record 68204;
+      Dim@1000000003 : ARRAY [8] OF Code[20];
+      iDim@1000000004 : Integer;
+      LineNo@1000000006 : Integer;
+      LineNoSecondary@1000000008 : Integer;
+      GenJnlLine2@1000000007 : Record 81;
+      IncadeaExtend@1101103003 : Codeunit 68203;
+      firstRec@1101103004 : Boolean;
+      CustomizationCU@1101103000 : Codeunit 68204;
+    BEGIN
+      CompelloLine.SETRANGE(CompelloLine.ClientID, CompelloDocument.ClientID);
+      CompelloLine.SETRANGE(ArchiveRef, CompelloDocument.ArchiveRef);
+      CompelloLine.FINDSET(FALSE,FALSE);
+
+      currArchiveNo := CompelloDocument.ArchiveRef;
+
+      //Get the Document Type for mapping reference
+      CompelloDocType.GET(CompelloDocument.VoucherType);
+
+      //Create first row with the vendor account/Debet values
+      GenJnlBatch.GET(GenJnlLine."Journal Template Name",GenJnlLine."Journal Batch Name");
+      LastGenJnlLine := GenJnlLine;
+      LineNo := GenJnlLine."Line No." + 10000;
+      GenJnlLine.INIT;
+      GenJnlLine.VALIDATE("Line No.", LineNo);
+      GenJnlLine.SetUpNewLine(LastGenJnlLine,0,FALSE);
+      //GenJnlLine."Document No." := NoSerMgmt.GetNextNo(GenJnlBatch."No. Series",WORKDATE,FALSE);
+      SetupDocNo(GenJnlLine);
+      GenJnlLine.VALIDATE("Document Type", CompelloDocType."Journal Document Type");
+      GenJnlLine.VALIDATE("Account Type", GetAccountType(CompelloLine.DebetType));
+      GenJnlLine.VALIDATE("Account No.", CompelloLine.DebetValue);
+      GenJnlLine.VALIDATE("VAT Prod. Posting Group", CompelloLine.DebetTaxCode);
+      GenJnlLine.VALIDATE(Amount, CompelloLine.Amount);
+      GenJnlLine.VALIDATE("Posting Date", CompelloDocument.VoucherDate);
+      IF CompelloLine.UserDef7 <> 0D THEN GenJnlLine.VALIDATE("Posting Date", CompelloLine.UserDef7);
+      GenJnlLine.VALIDATE(KID, CompelloDocument.KID);
+      GenJnlLine.VALIDATE("External Document No.", CompelloDocument.InvoiceNo);
+      GenJnlLine."Compello Archive No." := CompelloDocument.ArchiveRef;
+      GenJnlLine.VALIDATE(Description, COPYSTR(CompelloLine.Text,1,50));
+
+      IF GenJnlLine."VAT Prod. Posting Group" = '' THEN BEGIN
+        GenJnlLine.VALIDATE("Gen. Posting Type", 0);
+        GenJnlLine.VALIDATE("Gen. Prod. Posting Group", '');
+        GenJnlLine.VALIDATE("Gen. Bus. Posting Group", '');
+        GenJnlLine.VALIDATE("VAT Prod. Posting Group", '');
+        GenJnlLine.VALIDATE("VAT Bus. Posting Group", '');
+      END;
+      GenJnlLine.VALIDATE("Currency Code", ValidateCurrencyCode(CompelloLine.CurrencyValue));
+      //Balancing Account
+      GenJnlLine.VALIDATE("Bal. Account Type", GetAccountType(CompelloLine.CreditType));
+      GenJnlLine.VALIDATE("Bal. Account No.", CompelloLine.CreditValue);
+      GenJnlLine.VALIDATE("Bal. VAT Prod. Posting Group", CompelloLine.CreditTaxCode);
+      IF GenJnlLine."Bal. VAT Prod. Posting Group" = '' THEN BEGIN
+        GenJnlLine.VALIDATE("Bal. Acc.-Gen. Posting Type", 0);
+        GenJnlLine.VALIDATE("Bal. Gen. Bus. Posting Group", '');
+        GenJnlLine.VALIDATE("Bal. Acc.-Gen. Prod. Post. Grp", '');
+        GenJnlLine.VALIDATE("Bal. VAT Prod. Posting Group", '');
+        GenJnlLine.VALIDATE("Bal. VAT Bus. Posting Group", '');
+      END;
+      GenJnlLine.VALIDATE("Due Date", CompelloDocument.DueDate);
+
+      CASE IntegrationSetup."Integration Type" OF
+        IntegrationSetup."Integration Type"::NAV :
+          BEGIN
+            SetGenJnlLineDimensions(GenJnlLine,CompelloLine);
+          END;
+        IntegrationSetup."Integration Type"::Incadea :
+          BEGIN
+            IncadeaExtend.UpdateIncadeaGenJnlLine(GenJnlLine,CompelloLine);
+          END;
+      END;
+      CustomizationCU.ApplyCustomGenJnlLineMappings(GenJnlLine,CompelloDocument,CompelloLine);
+      GenJnlLine.INSERT(TRUE);
+
+      //Insert secondary document lines
+      IF CompelloLine.NEXT <> 0 THEN BEGIN
+        REPEAT
+          LineNoSecondary := LineNo + CompelloLine.Recno;
+          GenJnlLine2.INIT;
+          GenJnlLine.SetUpNewLine(GenJnlLine,0,FALSE);
+          SetupDocNo(GenJnlLine2);
+          LastGenJnlLine := GenJnlLine2;
+          GenJnlLine2."Journal Template Name" := GenJnlLine."Journal Template Name";
+          GenJnlLine2."Journal Batch Name" := GenJnlLine."Journal Batch Name";
+          GenJnlLine2.VALIDATE("Line No.", LineNoSecondary);
+          GenJnlLine2.VALIDATE("Posting Date", CompelloDocument.VoucherDate);
+          GenJnlLine2.VALIDATE("External Document No.", CompelloDocument.InvoiceNo);
+          IF CompelloLine.UserDef7 <> 0D THEN GenJnlLine2.VALIDATE("Posting Date", CompelloLine.UserDef7);
+          GenJnlLine2.VALIDATE("Document Type", GenJnlLine."Document Type");
+          GenJnlLine2.VALIDATE("Document No.", GenJnlLine."Document No.");
+          IF CompelloLine.DebetValue <> '' THEN BEGIN
+            //Debet Line
+              CASE CompelloLine.DebetType OF
+                'L' :
+                  BEGIN
+                    GenJnlLine2.VALIDATE("Account Type", GenJnlLine2."Account Type"::Vendor);
+                    GenJnlLine2.VALIDATE("Account No.", CompelloLine.DebetValue);
+                  END;
+
+                'K' :
+                  BEGIN
+                    GenJnlLine2.VALIDATE("Account Type", GenJnlLine2."Account Type"::Customer);
+                    GenJnlLine2.VALIDATE("Account No.", CompelloLine.DebetValue);
+                  END;
+
+                'H' :
+                  BEGIN
+                    GenJnlLine2.VALIDATE("Account Type", GenJnlLine2."Account Type"::"G/L Account");
+                    GenJnlLine2.VALIDATE("Account No.", CompelloLine.DebetValue);
+                  END;
+              END;
+            GenJnlLine2.VALIDATE(Amount, CompelloLine.Amount);
+            GenJnlLine2.VALIDATE("VAT Prod. Posting Group", CompelloLine.DebetTaxCode);
+            GenJnlLine2.VALIDATE("Currency Code", ValidateCurrencyCode(CompelloLine.CurrencyValue));
+            //Balancing Account COMP3.00
+            GenJnlLine2.VALIDATE("Bal. Account Type", GetAccountType(CompelloLine.CreditType));
+            GenJnlLine2.VALIDATE("Bal. Account No.", CompelloLine.CreditValue);
+            GenJnlLine2.VALIDATE("Bal. VAT Prod. Posting Group", CompelloLine.CreditTaxCode);
+          END ELSE BEGIN
+            //Credit Line
+              CASE CompelloLine.CreditType OF
+                'L' :
+                  BEGIN
+                    GenJnlLine2.VALIDATE("Account Type", GenJnlLine2."Account Type"::Vendor);
+                    GenJnlLine2.VALIDATE("Account No.", CompelloLine.CreditValue);
+                  END;
+
+                'K' :
+                  BEGIN
+                    GenJnlLine2.VALIDATE("Account Type", GenJnlLine2."Account Type"::Customer);
+                    GenJnlLine2.VALIDATE("Account No.", CompelloLine.CreditValue);
+                  END;
+
+                'H' :
+                  BEGIN
+                    GenJnlLine2.VALIDATE("Account Type", GenJnlLine2."Account Type"::"G/L Account");
+                    GenJnlLine2.VALIDATE("Account No.", CompelloLine.CreditValue);
+                  END;
+              END;
+            GenJnlLine2.VALIDATE(Amount, -CompelloLine.Amount);
+            GenJnlLine2.VALIDATE("VAT Prod. Posting Group", CompelloLine.CreditTaxCode);
+            GenJnlLine2.VALIDATE("Currency Code", ValidateCurrencyCode(CompelloLine.CurrencyValue));
+            //Balancing Account COMP3.00
+                  GenJnlLine2.VALIDATE("Bal. Account Type", GetAccountType(CompelloLine.DebetType));
+                  GenJnlLine2.VALIDATE("Bal. Account No.", CompelloLine.DebetValue);
+                  GenJnlLine2.VALIDATE("Bal. VAT Prod. Posting Group", CompelloLine.DebetTaxCode);
+                END;
+                IF GenJnlLine2."VAT Prod. Posting Group" = '' THEN BEGIN
+                  GenJnlLine2.VALIDATE("Gen. Posting Type", 0);
+                  GenJnlLine2.VALIDATE("Gen. Prod. Posting Group", '');
+                  GenJnlLine2.VALIDATE("Gen. Bus. Posting Group", '');
+                  GenJnlLine2.VALIDATE("VAT Prod. Posting Group", '');
+                  GenJnlLine2.VALIDATE("VAT Bus. Posting Group", '');
+                END;
+
+            // Dimensions //
+                CASE IntegrationSetup."Integration Type" OF
+                  IntegrationSetup."Integration Type"::NAV :
+                    BEGIN
+                      SetGenJnlLineDimensions(GenJnlLine2,CompelloLine);
+                    END;
+                  IntegrationSetup."Integration Type"::Incadea :
+                    BEGIN
+                      IncadeaExtend.UpdateIncadeaGenJnlLine(GenJnlLine2,CompelloLine);
+                    END;
+                END;
+
+                IF GenJnlLine2."Bal. VAT Prod. Posting Group" = '' THEN BEGIN
+                  GenJnlLine2.VALIDATE("Bal. Acc.-Gen. Posting Type", 0);
+                  GenJnlLine2.VALIDATE("Bal. Gen. Bus. Posting Group", '');
+                  GenJnlLine2.VALIDATE("Bal. Acc.-Gen. Prod. Post. Grp", '');
+                  GenJnlLine2.VALIDATE("Bal. VAT Prod. Posting Group", '');
+                  GenJnlLine2.VALIDATE("Bal. VAT Bus. Posting Group", '');
+                END;
+                GenJnlLine2.VALIDATE("Due Date", CompelloDocument.DueDate);
+                GenJnlLine2.VALIDATE(Description, COPYSTR(CompelloLine.Text,1,50));
+                GenJnlLine2.INSERT(TRUE);
+
+                GenJnlLine2."Compello Archive No." := GenJnlLine."Compello Archive No.";    // COMP3.00
+                CustomizationCU.ApplyCustomGenJnlLineMappings(GenJnlLine2,CompelloDocument,CompelloLine);
+                GenJnlLine2.MODIFY;
+
+              UNTIL CompelloLine.NEXT=0;
+            END;
+
+      CompelloDocument.Status := CompelloDocument.Status::Created;
+      CompelloDocument.MODIFY;
+    END;
+
+    PROCEDURE GetAccountType@1000000000(CompelloAccountType@1000000000 : Code[1]) : Integer;
+    BEGIN
+      CASE CompelloAccountType OF
+        'L' : EXIT(GenJnlLine."Account Type"::Vendor);
+        'K' : EXIT(GenJnlLine."Account Type"::Customer);
+        'H' : EXIT(GenJnlLine."Account Type"::"G/L Account");
+      END;
+    END;
+
+    PROCEDURE ValidateCurrencyCode@1000000004(CompelloCurrencyCode@1000000000 : Text[30]) : Code[10];
+    VAR
+      GLSetup@1000000001 : Record 98;
+      Currency@1000000002 : Record 4;
+      ErrInvalidCurrency@1000000003 : TextConst 'ENU="Invalid Currency Code from Compello. Code = %1";NOR="Ugyldig valuta fra Compello. Kode = %1"';
+    BEGIN
+      IF CompelloCurrencyCode = '' THEN EXIT('');
+      GLSetup.GET;
+      IF CompelloCurrencyCode = GLSetup."LCY Code" THEN EXIT('');
+      Currency.SETRANGE(Code,CompelloCurrencyCode);
+      IF Currency.ISEMPTY THEN ERROR(ErrInvalidCurrency,CompelloCurrencyCode);
+      EXIT(CompelloCurrencyCode);
+    END;
+
+    PROCEDURE ValidateIncadeaDimCodes@1101103008();
+    BEGIN
+    END;
+
+    PROCEDURE InsertVendorLedgerEntryRef@1101103000(VAR VendLedgEntry@1101103000 : Record 25;GenJnlLine@1101103001 : Record 81);
+    BEGIN
+      VendLedgEntry."Compello Archive No." := GenJnlLine."Compello Archive No.";
+    END;
+
+    PROCEDURE InsertGLEntryRef@1101103001(VAR GLEntry@1101103000 : Record 17;GenJnlLine@1101103001 : Record 81);
+    BEGIN
+      GLEntry."Compello Archive No." := GenJnlLine."Compello Archive No.";
+    END;
+
+    PROCEDURE ShowDocument@1101103002(ArchiveRef@1101103000 : Text[15]);
+    VAR
+      CompelloSetup@1101103002 : Record 68200;
+      CompelloHead@1101103001 : Record 68201;
+      URL@1101103003 : Text[250];
+    BEGIN
+      CompelloSetup.GET(COMPANYNAME);
+      IF ArchiveRef ='' THEN EXIT;
+      CompelloHead.SETRANGE(ArchiveRef, ArchiveRef);
+      IF CompelloHead.FINDFIRST THEN BEGIN
+        URL := CompelloSetup."Invoice Viewer Base URL" + '?cci=' + CompelloSetup.CCI+'&img='+DELCHR(FORMAT(CompelloHead.GUID),'=','{}-');
+        HYPERLINK(URL);
+      END;
+    END;
+
+    PROCEDURE GetSetup@1101103003();
+    BEGIN
+      IntegrationSetup.GET(COMPANYNAME);
+    END;
+
+    PROCEDURE SetGenJnlLineDimensions@1101103004(VAR GenJnlLine@1101103000 : Record 81;CompelloLine@1101103001 : Record 68202);
+    BEGIN
+      //Standard Dimensions
+    END;
+
+    PROCEDURE SetupDocNo@1101103005(VAR GenJnlLine@1101103000 : Record 81);
+    VAR
+      NoSerMgmt@1101103001 : Codeunit 396;
+      docNo@1101103002 : Code[20];
+    BEGIN
+      WITH GenJnlLine DO
+        IF ((currArchiveNo <> lastArchiveNo)AND(firstDoc=FALSE)) THEN BEGIN
+          "Document No." := INCSTR(LastGenJnlLine."Document No.");
+          CALCSUMS("Balance (LCY)");
+          IF ("Balance (LCY)"<>0) THEN;
+      //      bBokf›r:=FALSE;
+        END;
+    END;
+
+    BEGIN
+    END.
+  }
+}
+

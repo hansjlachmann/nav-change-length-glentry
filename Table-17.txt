@@ -1,0 +1,366 @@
+OBJECT Table 17 Finanspost
+{
+  OBJECT-PROPERTIES
+  {
+    Date=04.04.19;
+    Time=11:17:31;
+    Modified=Yes;
+    Version List=DE2.50,INC3.0.0.0,INC3.0.1.0,SID.04,COMPNAV5-1.0;
+  }
+  PROPERTIES
+  {
+    CaptionML=[DEU=Sachposten;
+               ENU=G/L Entry;
+               NOR=Finanspost];
+    LookupFormID=Form20;
+    DrillDownFormID=Form20;
+  }
+  FIELDS
+  {
+    { 1   ;   ;Entry No.           ;Integer       ;CaptionML=[DEU=Lfd. Nr.;
+                                                              ENU=Entry No.;
+                                                              NOR=Lõpenr.] }
+    { 3   ;   ;G/L Account No.     ;Code20        ;TableRelation="G/L Account";
+                                                   CaptionML=[DEU=Sachkontonr.;
+                                                              ENU=G/L Account No.;
+                                                              NOR=Finanskontonr.] }
+    { 4   ;   ;Posting Date        ;Date          ;CaptionML=[DEU=Buchungsdatum;
+                                                              ENU=Posting Date;
+                                                              NOR=Bokfõringsdato];
+                                                   ClosingDates=Yes }
+    { 5   ;   ;Document Type       ;Option        ;CaptionML=[DEU=Belegart;
+                                                              ENU=Document Type;
+                                                              NOR=Bilagstype];
+                                                   OptionCaptionML=[DEU=" ,Zahlung,Rechnung,Gutschrift,Zinsrechnung,Mahnung";
+                                                                    ENU=" ,Payment,Invoice,Credit Memo,Finance Charge Memo,Reminder";
+                                                                    NOR=" ,Betaling,Faktura,Kreditnota,Rentenota,Purring"];
+                                                   OptionString=[ ,Payment,Invoice,Credit Memo,Finance Charge Memo,Reminder] }
+    { 6   ;   ;Document No.        ;Code20        ;CaptionML=[DEU=Belegnr.;
+                                                              ENU=Document No.;
+                                                              NOR=Bilagsnr.] }
+    { 7   ;   ;Description         ;Text50        ;CaptionML=[DEU=Beschreibung;
+                                                              ENU=Description;
+                                                              NOR=Beskrivelse] }
+    { 10  ;   ;Bal. Account No.    ;Code20        ;TableRelation=IF (Bal. Account Type=CONST(G/L Account)) "G/L Account"
+                                                                 ELSE IF (Bal. Account Type=CONST(Customer)) Customer
+                                                                 ELSE IF (Bal. Account Type=CONST(Vendor)) Leverandõr
+                                                                 ELSE IF (Bal. Account Type=CONST(Bank Account)) "Bank Account"
+                                                                 ELSE IF (Bal. Account Type=CONST(Fixed Asset)) "Fixed Asset";
+                                                   CaptionML=[DEU=Gegenkontonr.;
+                                                              ENU=Bal. Account No.;
+                                                              NOR=Motkontonr.] }
+    { 17  ;   ;Amount              ;Decimal       ;CaptionML=[DEU=Betrag;
+                                                              ENU=Amount;
+                                                              NOR=Belõp];
+                                                   AutoFormatType=1 }
+    { 23  ;   ;Department Code     ;Code10        ;TableRelation=Department;
+                                                   CaptionML=[DEU=Kostenstellencode;
+                                                              ENU=Department Code;
+                                                              NOR=Avdelingskode] }
+    { 24  ;   ;Make Code           ;Code10        ;TableRelation=Make;
+                                                   CaptionML=[DEU=Markencode;
+                                                              ENU=Make Code;
+                                                              NOR=Merkekode] }
+    { 27  ;   ;User ID             ;Code20        ;TableRelation=User;
+                                                   TestTableRelation=No;
+                                                   CaptionML=[DEU=Benutzer ID;
+                                                              ENU=User ID;
+                                                              NOR=Bruker-ID] }
+    { 28  ;   ;Source Code         ;Code10        ;TableRelation="Source Code";
+                                                   CaptionML=[DEU=Herkunftscode;
+                                                              ENU=Source Code;
+                                                              NOR=Kildespor] }
+    { 29  ;   ;System-Created Entry;Boolean       ;CaptionML=[DEU=Systembuchung;
+                                                              ENU=System-Created Entry;
+                                                              NOR=Opprettet automatisk] }
+    { 30  ;   ;Prior-Year Entry    ;Boolean       ;CaptionML=[DEU=Nachbuchung;
+                                                              ENU=Prior-Year Entry;
+                                                              NOR=Etterpost] }
+    { 41  ;   ;Job No.             ;Code20        ;TableRelation=Job;
+                                                   CaptionML=[DEU=Projektnr.;
+                                                              ENU=Job No.;
+                                                              NOR=Prosjektnr.] }
+    { 42  ;   ;Quantity            ;Decimal       ;CaptionML=[DEU=Menge;
+                                                              ENU=Quantity;
+                                                              NOR=Antall];
+                                                   DecimalPlaces=0:5 }
+    { 43  ;   ;VAT Amount          ;Decimal       ;CaptionML=[DEU=MWSt Betrag;
+                                                              ENU=VAT Amount;
+                                                              NOR=Mva-belõp];
+                                                   AutoFormatType=1 }
+    { 45  ;   ;Business Unit Code  ;Code10        ;TableRelation="Business Unit";
+                                                   CaptionML=[DEU=Konzernmandantencode;
+                                                              ENU=Business Unit Code;
+                                                              NOR=Konsernkode] }
+    { 46  ;   ;Journal Batch Name  ;Code10        ;TableRelation="Gen. Journal Batch";
+                                                   TestTableRelation=No;
+                                                   CaptionML=[DEU=Buch.-Blatt Name;
+                                                              ENU=Journal Batch Name;
+                                                              NOR=Kladdenavn] }
+    { 47  ;   ;Reason Code         ;Code10        ;TableRelation="Reason Code";
+                                                   CaptionML=[DEU=Ursachencode;
+                                                              ENU=Reason Code;
+                                                              NOR=èrsaksspor] }
+    { 48  ;   ;Gen. Posting Type   ;Option        ;CaptionML=[DEU=Buchungsart;
+                                                              ENU=Gen. Posting Type;
+                                                              NOR=Bokfõringstype];
+                                                   OptionCaptionML=[DEU=" ,Einkauf,Verkauf,Ausgleich";
+                                                                    ENU=" ,Purchase,Sale,Settlement";
+                                                                    NOR=" ,Kjõp,Salg,Avregning"];
+                                                   OptionString=[ ,Purchase,Sale,Settlement] }
+    { 49  ;   ;Gen. Bus. Posting Group;Code10     ;TableRelation="Gen. Business Posting Group";
+                                                   CaptionML=[DEU=GeschÑftsbuchungsgruppe;
+                                                              ENU=Gen. Bus. Posting Group;
+                                                              NOR=Bokfõringsgruppe - firma] }
+    { 50  ;   ;Gen. Prod. Posting Group;Code10    ;TableRelation="Gen. Product Posting Group";
+                                                   CaptionML=[DEU=Produktbuchungsgruppe;
+                                                              ENU=Gen. Prod. Posting Group;
+                                                              NOR=Bokfõringsgruppe - vare] }
+    { 51  ;   ;Bal. Account Type   ;Option        ;CaptionML=[DEU=Gegenkontoart;
+                                                              ENU=Bal. Account Type;
+                                                              NOR=Motkontotype];
+                                                   OptionCaptionML=[DEU=Sachkonto,Debitor,Kreditor,Bankkonto,Anlage;
+                                                                    ENU=G/L Account,Customer,Vendor,Bank Account,Fixed Asset;
+                                                                    NOR=Finans,Kunde,Leverandõr,Bank,Aktiva];
+                                                   OptionString=G/L Account,Customer,Vendor,Bank Account,Fixed Asset }
+    { 52  ;   ;Transaction No.     ;Integer       ;CaptionML=[DEU=Transaktionsnr.;
+                                                              ENU=Transaction No.;
+                                                              NOR=Transaksjonsnr.] }
+    { 53  ;   ;Debit Amount        ;Decimal       ;CaptionML=[DEU=Sollbetrag;
+                                                              ENU=Debit Amount;
+                                                              NOR=Debetbelõp];
+                                                   BlankZero=Yes;
+                                                   AutoFormatType=1 }
+    { 54  ;   ;Credit Amount       ;Decimal       ;CaptionML=[DEU=Habenbetrag;
+                                                              ENU=Credit Amount;
+                                                              NOR=Kreditbelõp];
+                                                   BlankZero=Yes;
+                                                   AutoFormatType=1 }
+    { 55  ;   ;Document Date       ;Date          ;CaptionML=[DEU=Belegdatum;
+                                                              ENU=Document Date;
+                                                              NOR=Bilagsdato];
+                                                   ClosingDates=Yes }
+    { 56  ;   ;External Document No.;Code20       ;CaptionML=[DEU=Externe Belegnummer;
+                                                              ENU=External Document No.;
+                                                              NOR=Eksterndokumentnr.] }
+    { 57  ;   ;Source Type         ;Option        ;CaptionML=[DEU=Herkunftsart;
+                                                              ENU=Source Type;
+                                                              NOR=Kildetype];
+                                                   OptionCaptionML=[DEU=" ,Debitor,Kreditor,Bankkonto,Anlage";
+                                                                    ENU=" ,Customer,Vendor,Bank Account,Fixed Asset";
+                                                                    NOR=" ,Kunde,Leverandõr,Bankkonto,Aktiva"];
+                                                   OptionString=[ ,Customer,Vendor,Bank Account,Fixed Asset] }
+    { 58  ;   ;Source No.          ;Code20        ;TableRelation=IF (Source Type=CONST(Customer)) Customer
+                                                                 ELSE IF (Source Type=CONST(Vendor)) Leverandõr
+                                                                 ELSE IF (Source Type=CONST(Bank Account)) "Bank Account";
+                                                   CaptionML=[DEU=Herkunftsnr.;
+                                                              ENU=Source No.;
+                                                              NOR=Kildenr.] }
+    { 59  ;   ;No. Series          ;Code10        ;TableRelation="No. Series";
+                                                   CaptionML=[DEU=Nummernserie;
+                                                              ENU=No. Series;
+                                                              NOR=Nr.serie] }
+    { 60  ;   ;Tax Area Code       ;Code20        ;TableRelation="Tax Area";
+                                                   CaptionML=[DEU=Steuergebietscode;
+                                                              ENU=Tax Area Code;
+                                                              NOR=Mva-omrÜdekode] }
+    { 61  ;   ;Tax Liable          ;Boolean       ;CaptionML=[DEU=Steuerpflichtig;
+                                                              ENU=Tax Liable;
+                                                              NOR=Skyldig mva.] }
+    { 62  ;   ;Tax Group Code      ;Code10        ;TableRelation="Tax Group";
+                                                   CaptionML=[DEU=Steuergruppencode;
+                                                              ENU=Tax Group Code;
+                                                              NOR=Mva-gruppekode] }
+    { 63  ;   ;Use Tax             ;Boolean       ;CaptionML=[DEU=Verbrauchssteuer;
+                                                              ENU=Use Tax;
+                                                              NOR=Amerikansk mva.] }
+    { 64  ;   ;VAT Bus. Posting Group;Code10      ;TableRelation="VAT Business Posting Group";
+                                                   CaptionML=[DEU=MWSt GeschÑftsbuchungsgruppe;
+                                                              ENU=VAT Bus. Posting Group;
+                                                              NOR=Mva-bokfõringsgruppe - firma] }
+    { 65  ;   ;VAT Prod. Posting Group;Code10     ;TableRelation="VAT Product Posting Group";
+                                                   CaptionML=[DEU=MWSt Produktbuchungsgruppe;
+                                                              ENU=VAT Prod. Posting Group;
+                                                              NOR=Mva-bokfõringsgruppe - vare] }
+    { 68  ;   ;Additional-Currency Amount;Decimal ;CaptionML=[DEU=Betrag (BW);
+                                                              ENU=Additional-Currency Amount;
+                                                              NOR=Tilleggsvalutabelõp];
+                                                   AutoFormatType=1;
+                                                   AutoFormatExpr=GetCurrencyCode }
+    { 69  ;   ;Add.-Currency Debit Amount;Decimal ;CaptionML=[DEU=Sollbetrag (BW);
+                                                              ENU=Add.-Currency Debit Amount;
+                                                              NOR=Till.valuta - debetbelõp];
+                                                   AutoFormatType=1;
+                                                   AutoFormatExpr=GetCurrencyCode }
+    { 70  ;   ;Add.-Currency Credit Amount;Decimal;CaptionML=[DEU=Habenbetrag (BW);
+                                                              ENU=Add.-Currency Credit Amount;
+                                                              NOR=Till.valuta - kreditbelõp];
+                                                   AutoFormatType=1;
+                                                   AutoFormatExpr=GetCurrencyCode }
+    { 71  ;   ;Close Income Statement Dim. ID;Integer;
+                                                   CaptionML=[DEU=GuV-Konten Nullstellung Dim.ID;
+                                                              ENU=Close Income Statement Dim. ID;
+                                                              NOR=Lukk Ürsoppgjõrsdim.-ID] }
+    { 5400;   ;Prod. Order No.     ;Code20        ;CaptionML=[DEU=FA-Nr.;
+                                                              ENU=Prod. Order No.;
+                                                              NOR=Prod.ordrenr.] }
+    { 5600;   ;FA Entry Type       ;Option        ;CaptionML=[DEU=Anlage Postenart;
+                                                              ENU=FA Entry Type;
+                                                              NOR=Aktivaposttype];
+                                                   OptionCaptionML=[DEU=" ,Anlage,Wartung";
+                                                                    ENU=" ,Fixed Asset,Maintenance";
+                                                                    NOR=" ,Aktiva,Vedlikehold"];
+                                                   OptionString=[ ,Fixed Asset,Maintenance] }
+    { 5601;   ;FA Entry No.        ;Integer       ;TableRelation=IF (FA Entry Type=CONST(Fixed Asset)) "FA Ledger Entry"
+                                                                 ELSE IF (FA Entry Type=CONST(Maintenance)) "Maintenance Ledger Entry";
+                                                   CaptionML=[DEU=Anlagenposten Lfd. Nr.;
+                                                              ENU=FA Entry No.;
+                                                              NOR=Aktivalõpenr.];
+                                                   BlankZero=Yes }
+    { 5802;   ;Value Entry No.     ;Integer       ;TableRelation="Value Entry";
+                                                   CaptionML=[DEU=Wertposten Lfd. Nr.;
+                                                              ENU=Value Entry No.;
+                                                              NOR=Verdilõpenummer];
+                                                   BlankZero=Yes }
+    { 10601;  ;Investeringsavgiftsbelõp;Decimal    }
+    { 68200;  ;Compello Archive No.;Text15        ;CaptionML=[ENU=Compello Archive No.;
+                                                              NOR=Compello arkivnummer];
+                                                   Description=COMPNAV5-1.0 / Byx Digital AS;
+                                                   Editable=No }
+    { 70201;  ;Posttype kjõretõybokfõring;Option  ;OptionString=[ ,PÜkost,Diversekostnader,Kostprisjustering,Avgift,Kostfõring kostnader,Bonus,Salgskorreksjon] }
+    { 70211;  ;Bilagsnr. kost pÜkost;Code20       ;Editable=Yes }
+    { 5025350;;Exch. Parts Tax Amount;Decimal     ;CaptionML=[DEU=AT-USt. Betrag;
+                                                              ENU=Exch. Parts Tax Amount;
+                                                              NOR=Avgift deler valutabelõp];
+                                                   AutoFormatType=1 }
+    { 5025351;;Branch Code         ;Code10        ;TableRelation="Branch Description";
+                                                   CaptionML=[DEU=Filialcode;
+                                                              ENU=Branch Code;
+                                                              NOR=Filialkode] }
+    { 5025363;;Main Area           ;Option        ;CaptionML=[DEU=Hauptbereich;
+                                                              ENU=Main Area;
+                                                              NOR=HovedomrÜde];
+                                                   OptionCaptionML=[DEU=" ,Teilehandel,Fahrzeughandel,Werkstatt,Filiale,Kasse";
+                                                                    ENU=" ,Parts Sales & Purchases,Vehicle Sales & Purchases,Service,Branch,Cash Register";
+                                                                    NOR=" ,Dele salg & kjõp,Kjõretõy salg & kjõp,Service,Fillialtransaksjoner,Kassesystem"];
+                                                   OptionString=[ ,Parts Sales & Purchases,Vehicle Sales & Purchases,Service,Branch,Cash Register] }
+    { 5025364;;VIN                 ;Code20        ;TableRelation=Vehicle;
+                                                   ValidateTableRelation=Yes;
+                                                   TestTableRelation=Yes;
+                                                   CaptionML=[DEU=Fahrgestellnummer;
+                                                              ENU=VIN;
+                                                              NOR=Chassisnr.];
+                                                   Description=VIN }
+    { 5025365;;Book No.            ;Code20        ;CaptionML=[DEU=Buchnummer;
+                                                              ENU=Book No.;
+                                                              NOR=Prosjektnr.];
+                                                   Description=Book No. }
+    { 5025366;;Veh. Source Code    ;Option        ;CaptionML=[DEU=Herkunftscode Fzg.;
+                                                              ENU=Veh. Source Code;
+                                                              NOR=Kjõretõy kildekode];
+                                                   OptionCaptionML=[DEU=" ,Verkaufsrechnung,Verkaufsgutschrift";
+                                                                    ENU=" ,Sales Invoice,Sales Credit Memo";
+                                                                    NOR=" ,Salg faktura,Salg kreditnota"];
+                                                   OptionString=[ ,Sales Invoice,Sales Credit Memo];
+                                                   Description=ID of vehicle sales invoice or vehicle sales credit memo }
+    { 5025600;;Reposted            ;Boolean       ;CaptionML=[DEU=Umgebucht;
+                                                              ENU=Reposted;
+                                                              NOR=Gjenbokfõrt] }
+    { 5025601;;Corrected           ;Boolean       ;CaptionML=[DEU=Storniert;
+                                                              ENU=Corrected;
+                                                              NOR=Endret] }
+    { 5025602;;Correction to curr. No.;Integer    ;CaptionML=[DEU=Storno fÅr lfd. Nr.;
+                                                              ENU=Correction to curr. No.;
+                                                              NOR=Endret til gjeldende nr.] }
+    { 5025603;;Reposting to curr. No.;Integer     ;CaptionML=[DEU=Umbuchung fÅr lfd. Nr.;
+                                                              ENU=Reposting to curr. No.;
+                                                              NOR=Gjenbokfõrt til lõpenr.] }
+    { 5025604;;Register Date       ;Date          ;CaptionML=[DEU=Journaldatum;
+                                                              ENU=Register Date;
+                                                              NOR=Opprettet dato] }
+    { 5025605;;Service Ledger Entry No.;Integer   ;TableRelation="Service Ledger Entry";
+                                                   CaptionML=[DEU=Werkstattposten lfd. Nr.;
+                                                              ENU=Service Ledger Entry No.;
+                                                              NOR=Servicepost lõpenr.];
+                                                   Description=PA027475 }
+  }
+  KEYS
+  {
+    {    ;Entry No.                               ;MaintainSIFTIndex=No;
+                                                   Clustered=Yes }
+    {    ;G/L Account No.,Posting Date            ;SumIndexFields=Amount,Debit Amount,Credit Amount,Additional-Currency Amount,Add.-Currency Debit Amount,Add.-Currency Credit Amount;
+                                                   MaintainSIFTIndex=No }
+    {    ;G/L Account No.,Business Unit Code,Department Code,Make Code,Posting Date,Branch Code;
+                                                   SumIndexFields=Amount,Debit Amount,Credit Amount,Additional-Currency Amount,Add.-Currency Debit Amount,Add.-Currency Credit Amount;
+                                                   MaintainSIFTIndex=No }
+    {    ;Document No.,Posting Date               ;MaintainSIFTIndex=No }
+    {    ;Transaction No.                         ;MaintainSIFTIndex=No }
+    {    ;G/L Account No.,Business Unit Code,Branch Code,Department Code,Make Code,Posting Date;
+                                                   SumIndexFields=Amount,Additional-Currency Amount;
+                                                   MaintainSIFTIndex=No }
+    {    ;VIN,Book No.,G/L Account No.,Document No.;
+                                                   SumIndexFields=Amount,Debit Amount,Credit Amount,Additional-Currency Amount,Add.-Currency Debit Amount,Add.-Currency Credit Amount,VAT Amount;
+                                                   MaintainSIFTIndex=No }
+    {    ;G/L Account No.,Gen. Posting Type,Business Unit Code,Department Code,Make Code,Posting Date,Branch Code;
+                                                   SumIndexFields=Amount,Debit Amount,Credit Amount,Additional-Currency Amount,Add.-Currency Debit Amount,Add.-Currency Credit Amount,VAT Amount;
+                                                   MaintainSIFTIndex=No }
+    {    ;G/L Account No.,Business Unit Code,Gen. Posting Type,Department Code,Make Code,Posting Date,Branch Code;
+                                                   SumIndexFields=Amount,Debit Amount,Credit Amount,Additional-Currency Amount,Add.-Currency Debit Amount,Add.-Currency Credit Amount,VAT Amount;
+                                                   MaintainSIFTIndex=No }
+    {    ;Value Entry No.                         ;MaintainSIFTIndex=No }
+    {    ;Service Ledger Entry No.                ;KeyGroups=ENGINE;
+                                                   MaintainSIFTIndex=No }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+    VAR
+      GLSetup@1109400000 : Record 98;
+      GLSetupRead@1109400001 : Boolean;
+
+    PROCEDURE GetCurrencyCode@1() : Code[10];
+    BEGIN
+      IF NOT GLSetupRead THEN BEGIN
+        GLSetup.GET;
+        GLSetupRead := TRUE;
+      END;
+      EXIT(GLSetup."Additional Reporting Currency");
+    END;
+
+    BEGIN
+    {
+      +----------------------------------------------+
+      | Copyright ∏ 2000 Incadea AG Germany          |
+      +----------------------------------------------+
+      | INCADEA ENGINE                               |
+      +----------------------------------------------+
+      PA-Number   Date
+      ------------------------------------------------
+      PA022342    10.12.03
+      PA022576    05.03.04.
+      PA021000    22.07.04
+      PA023030    18.08.04
+      PA027235    31.01.06
+      PA027475    04.04.06  Create new field "Service Ledger Entry No." with table relation to table Service Ledger Entry
+                            Create new Key "Service Ledger Entry No.
+
+      +----------------------------------------------+
+      | 2002 SI-DATA A/S (SID)                       |
+      +----------------------------------------------+
+      | INCADEA ENGINE                               |
+      +----------------------------------------------+
+      No.  Version  Date      ID     Remark
+      ------------------------------------------------
+      01.  2.20     03.04.02  KSW    Lagt inn endringer for Investeringsavgift
+                                     Nytt felt: InvesteringsavgiftsbelõpDecimal
+      02.  2.30     14.07.03  HJL    Nytt felt: 70211Bilagsnr. kost pÜkostCode20
+      03.  2.30     21.08.03  HJL    Endret Property pÜ VIN ValidateTableRelation = Ja TestTableRelation = Ja
+      04.  2.30     21.04.06  HJL    Nytt felt:
+                                     70201 Posttype kjõretõybokfõring Option
+    }
+    END.
+  }
+}
+
