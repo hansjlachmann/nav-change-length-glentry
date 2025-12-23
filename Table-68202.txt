@@ -1,0 +1,117 @@
+OBJECT Table 68202 Compello Document Line
+{
+  OBJECT-PROPERTIES
+  {
+    Date=24.04.19;
+    Time=12:00:00;
+    Version List=COMPNAV5-1.0;
+  }
+  PROPERTIES
+  {
+    CaptionML=NOR=Compello eksportlinjer;
+  }
+  FIELDS
+  {
+    { 1   ;   ;ClientID            ;Text10         }
+    { 2   ;   ;ArchiveRef          ;Text15         }
+    { 3   ;   ;LineNo              ;Integer        }
+    { 4   ;   ;Amount              ;Decimal        }
+    { 5   ;   ;BankAccount         ;Text50         }
+    { 6   ;   ;ClientRecNo         ;Integer        }
+    { 7   ;   ;CreditDesc          ;Text50         }
+    { 8   ;   ;CreditTaxCode       ;Text20         }
+    { 9   ;   ;CreditTaxCodeDesc   ;Text50         }
+    { 10  ;   ;CreditType          ;Text1          }
+    { 11  ;   ;CreditValue         ;Text30         }
+    { 12  ;   ;CurrencyAmount      ;Decimal        }
+    { 13  ;   ;CurrencyDesc        ;Text50         }
+    { 14  ;   ;CurrencyValue       ;Text30         }
+    { 15  ;   ;DebetDesc           ;Text50         }
+    { 16  ;   ;DebetTaxCode        ;Text20         }
+    { 17  ;   ;DebetTaxCodeDesc    ;Text50         }
+    { 18  ;   ;DebetType           ;Text30         }
+    { 19  ;   ;DebetValue          ;Text30         }
+    { 20  ;   ;Dim10Desc           ;Text50         }
+    { 21  ;   ;Dim10Value          ;Text30         }
+    { 22  ;   ;Dim11Desc           ;Text50         }
+    { 23  ;   ;Dim11Value          ;Text30         }
+    { 24  ;   ;Dim12Desc           ;Text50         }
+    { 25  ;   ;Dim12Value          ;Text30         }
+    { 26  ;   ;Dim13Desc           ;Text50         }
+    { 27  ;   ;Dim13Value          ;Text30         }
+    { 28  ;   ;Dim14Desc           ;Text50         }
+    { 29  ;   ;Dim14Value          ;Text30         }
+    { 30  ;   ;Dim15Desc           ;Text50         }
+    { 31  ;   ;Dim15Value          ;Text30         }
+    { 32  ;   ;Dim1Desc            ;Text50         }
+    { 33  ;   ;Dim1Value           ;Text30         }
+    { 34  ;   ;Dim2Desc            ;Text50         }
+    { 35  ;   ;Dim2Value           ;Text30         }
+    { 36  ;   ;Dim3Desc            ;Text50         }
+    { 37  ;   ;Dim3Value           ;Text30         }
+    { 38  ;   ;Dim4Desc            ;Text50         }
+    { 39  ;   ;Dim4Value           ;Text30         }
+    { 40  ;   ;Dim5Desc            ;Text50         }
+    { 41  ;   ;Dim5Value           ;Text30         }
+    { 42  ;   ;Dim6Desc            ;Text50         }
+    { 43  ;   ;Dim6Value           ;Text30         }
+    { 44  ;   ;Dim7Desc            ;Text50         }
+    { 45  ;   ;Dim7Value           ;Text30         }
+    { 46  ;   ;Dim8Desc            ;Text50         }
+    { 47  ;   ;Dim8Value           ;Text30         }
+    { 48  ;   ;Dim9Desc            ;Text50         }
+    { 49  ;   ;Dim9Value           ;Text30         }
+    { 50  ;   ;Discount            ;Decimal        }
+    { 51  ;   ;DiscountDate        ;Date           }
+    { 52  ;   ;Error               ;Text30         }
+    { 53  ;   ;Match               ;Boolean        }
+    { 54  ;   ;MatchUnits          ;Decimal        }
+    { 55  ;   ;PeriodDesc          ;Text30         }
+    { 56  ;   ;PeriodValue         ;Text30         }
+    { 57  ;   ;ProductDesc         ;Text250        }
+    { 58  ;   ;ProductDescFree     ;Text250        }
+    { 59  ;   ;ProductValue        ;Text100        }
+    { 60  ;   ;Received            ;Boolean        }
+    { 61  ;   ;ReceivedUnits       ;Decimal        }
+    { 62  ;   ;Recno               ;Integer        }
+    { 63  ;   ;RequisitionedBy     ;Text30         }
+    { 64  ;   ;Text                ;Text50         }
+    { 65  ;   ;UnitPrice           ;Decimal        }
+    { 66  ;   ;UserDef1            ;Text30         }
+    { 67  ;   ;UserDef10           ;Text30         }
+    { 68  ;   ;UserDef11           ;Text30         }
+    { 69  ;   ;UserDef12           ;Text30         }
+    { 70  ;   ;UserDef13 - PR Doc. No.;Text30      }
+    { 71  ;   ;UserDef14 - PR Doc. Line No.;Text30 }
+    { 72  ;   ;UserDef15           ;Text30         }
+    { 73  ;   ;UserDef2 - ItemNo   ;Text30         }
+    { 74  ;   ;UserDef3            ;Text30         }
+    { 75  ;   ;UserDef4            ;Text30         }
+    { 76  ;   ;UserDef5            ;Text30         }
+    { 77  ;   ;UserDef6 - PO Line No.;Text30       }
+    { 78  ;   ;UserDef7            ;Date           }
+    { 79  ;   ;UserDef8            ;Text30         }
+    { 80  ;   ;UserDef9            ;Text30         }
+    { 81  ;   ;VatAmount           ;Decimal        }
+    { 82  ;   ;VendResKontro       ;Text30         }
+    { 83  ;   ;Volume              ;Decimal        }
+    { 84  ;   ;VoRecno             ;Integer        }
+  }
+  KEYS
+  {
+    {    ;ClientID,ArchiveRef,Recno               ;Clustered=Yes }
+  }
+  FIELDGROUPS
+  {
+  }
+  CODE
+  {
+
+    BEGIN
+    {
+      2014-12-19 GL:  Dim Desc fields 30 long changed to 50 long
+    }
+    END.
+  }
+}
+
