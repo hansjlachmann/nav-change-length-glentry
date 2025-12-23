@@ -2,9 +2,8 @@ OBJECT Table 25 Leverand›rpost
 {
   OBJECT-PROPERTIES
   {
-    Date=03.08.18;
-    Time=21:36:25;
-    Modified=Yes;
+    Date=23.12.25;
+    Time=00:00:00;
     Version List=NO2.50,REM4.00.02.01,COMPNAV5-1.0;
   }
   PROPERTIES
@@ -37,7 +36,7 @@ OBJECT Table 25 Leverand›rpost
     { 6   ;   ;Document No.        ;Code20        ;CaptionML=[DEU=Belegnr.;
                                                               ENU=Document No.;
                                                               NOR=Bilagsnr.] }
-    { 7   ;   ;Description         ;Text50        ;CaptionML=[DEU=Beschreibung;
+    { 7   ;   ;Description         ;Text100       ;CaptionML=[DEU=Beschreibung;
                                                               ENU=Description;
                                                               NOR=Beskrivelse] }
     { 11  ;   ;Currency Code       ;Code10        ;TableRelation=Valuta;

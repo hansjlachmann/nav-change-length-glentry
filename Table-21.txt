@@ -2,9 +2,8 @@ OBJECT Table 21 Customer Ledger Entry
 {
   OBJECT-PROPERTIES
   {
-    Date=06.09.13;
-    Time=14:47:28;
-    Modified=Yes;
+    Date=23.12.25;
+    Time=00:00:00;
     Version List=DE2.50,AR2.60.04,INC3.0.2.0,LPG01;
   }
   PROPERTIES
@@ -37,7 +36,7 @@ OBJECT Table 21 Customer Ledger Entry
     { 6   ;   ;Document No.        ;Code20        ;CaptionML=[DEU=Belegnr.;
                                                               ENU=Document No.;
                                                               NOR=Bilagsnr.] }
-    { 7   ;   ;Description         ;Text50        ;CaptionML=[DEU=Beschreibung;
+    { 7   ;   ;Description         ;Text100       ;CaptionML=[DEU=Beschreibung;
                                                               ENU=Description;
                                                               NOR=Beskrivelse] }
     { 11  ;   ;Currency Code       ;Code10        ;TableRelation=Valuta;
